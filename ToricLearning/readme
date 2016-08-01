@@ -1,1 +1,5 @@
 This folder contains code for applying reinforcement learning to try and maximize the lifetime of a 1D quantum Ising Model.
+
+ising.py contains an OpenAI gym environment class that implements Ising-like dynamics.
+
+IsingFun.ipynb is an IPython Notebook file that runs a simple simulation.  Again, this is all dependent on an OpenAI Gym installation.
