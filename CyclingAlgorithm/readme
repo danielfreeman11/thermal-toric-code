@@ -1,0 +1,3 @@
+This code simulates the 1D ising model at finite temperature and applies a fairly naiive error correction algorithm to it.
+
+For details of the error correction algorithm, see http://arxiv.org/abs/1603.05005
