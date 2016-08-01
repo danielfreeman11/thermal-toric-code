@@ -1,3 +1,7 @@
 This code simulates the 1D ising model at finite temperature and applies a fairly naiive error correction algorithm to it.
 
+The most "mature" script is SingleShotLengthSweep.py.  The others are mainly copies of this script for performing parameter sweeps holding different things fixed.
+
+For example, SingleShotLengthSweep varies system size for a parallel application of the error correcting algorithm, SingleShotLinearLengthSweep is the same, but for a serial application of the error correcting algorithm.  LambdaSweep and LambdaSweepSerial likewise sweep the \lambda parameter (see paper below) for parallel and serial application, respectively (holding length fixed).
+
 For details of the error correction algorithm, see http://arxiv.org/abs/1603.05005
