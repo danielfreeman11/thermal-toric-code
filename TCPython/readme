@@ -1,3 +1,7 @@
-This folder contains the old python code for toric code simulation.
+This folder contains the old python code for toric code simulation.  This code is no longer under active development.
+
+ContinuousTime.py contains the majority of the class definitions for actually performing the simulation.
+
+Most of the other scripts are one-off scripts that were used to launch jobs on the cluster.  AnalysisSmart.py is a good example of one of these.
 
 For details, see http://arxiv.org/pdf/1405.2315.pdf
