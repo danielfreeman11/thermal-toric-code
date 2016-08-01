@@ -1,1 +1,7 @@
-This is a rewritten version of the python code for simulating the toric code.  It runs considerably faster.
+This is a rewritten version of the python code for simulating the toric code.  It runs considerably faster than the python code in TCPython.
+
+lattice.h contains the class definitions for simulation a toric code at arbitrary finite temperature.  Note that only one type of defect is simulated.
+
+simulation.cpp contains code for performing and averaging the results of 1000 simulations.  The simulation run-time is set by a short exploratory simulation which calculate the approximate lifetime of the toric code at the specified temperature.  "Lifetime", in this situation, is about how long on average it takes for a defect pair to cross a winding operator.
+
+entanglement_dynamics.cpp is a work in progress for calculating finite-temperature entanglement properties for the toric code using a replica trick.
