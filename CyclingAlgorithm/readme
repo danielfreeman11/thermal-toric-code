@@ -5,3 +5,5 @@ The most "mature" script is SingleShotLengthSweep.py.  The others are mainly cop
 For example, SingleShotLengthSweep varies system size for a parallel application of the error correcting algorithm, SingleShotLinearLengthSweep is the same, but for a serial application of the error correcting algorithm.  LambdaSweep and LambdaSweepSerial likewise sweep the \lambda parameter (see paper below) for parallel and serial application, respectively (holding length fixed).
 
 For details of the error correction algorithm, see http://arxiv.org/abs/1603.05005
+
+In the interest of reproduceability, I've included my launch, analysis, and plotting scripts in Run folder.  It should be fairly straightforward to completely reproduce all of my figures if you follow the readme in that folder.
