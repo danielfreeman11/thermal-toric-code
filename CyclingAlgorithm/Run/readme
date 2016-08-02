@@ -1,2 +1,24 @@
 This folder contains all the scripts necessary to reproduce the data in my paper (http://arxiv.org/pdf/1603.05005.pdf)
 
+The script analysis.py (when pointed to the appropriate directory) will produce data files that are appropriately formatted for the ipython notebook PlottingIsingCycling.ipynb to plot.
+
+For my particular filesystem, this amounted to:
+
+1. Launching the job scripts (using an SGE cluster):
+
+qsub -t 1-270 TC2SingleShot4.sh
+qsub -t 1-180 TC2SingleShot5.sh
+qsub -t 1-90 TC2SingleShotSerialSweep.sh
+qsub -t 1-900 TC2SingleShotLinearLengthSweep.sh
+
+2. Performing the data analysis:
+
+python analysis.py './lambdasweep_fixed' > outputwitherror_fixed.txt
+python analysis.py './seriallambdasweep_fixed' > serialoutputwitherror_fixed.txt
+python analysis.py '../longrunswitherror_fixed' > lengthsweepwitherror_fixed.txt
+python MaxChiAnalysis.py > maxratedatawitherror_fixed.txt
+
+3. Running the notebook PlottingIsingCycling.ipynb
+
+
+The only issues should be making sure the different analysis scripts point to the right folders, and that the plotting notebook points to the right data files.
