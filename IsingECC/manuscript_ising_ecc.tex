@@ -39,6 +39,11 @@
 \newcommand{\figref}[1]{Fig. \ref{#1}}
 
 
+\newcommand{\blue}[1]{{\color{blue} { #1}}}
+\newcommand{\red}[1]{{\color{red} { #1}}}
+\newcommand{\green}[1]{{\color{green} { #1}}}
+\newcommand{\needcite}{{\color{blue} {[Citation needed]}}}
+
 \newtheorem{theorem}{Theorem}[section]
 \newtheorem{lemma}[theorem]{Lemma}
 \newtheorem{proposition}[theorem]{Proposition}
@@ -62,7 +67,7 @@
 
 %\allowdisplaybreaks
 
-\title{Finite temperature thresholds for stabilizer codes with few measurements}
+\title{Stable quantum memories with few measurements}%\title{Finite temperature thresholds for stabilizer codes with few measurements}
 
 
 \author{C. Daniel Freeman}
@@ -97,15 +102,15 @@
 \label{sec:Intro}
 %%%%%%%%%%%%%%%%%%%%%%
 
- While an ideal finite temperature quantum memory would require no active error correcting elements, no such systems are known to exist in an experimentally accessible number of dimensions.  Practically, the operation of a quantum memory is a balance between passive elements (i.e. dissipative cooling), and active measurement and correction cycles to keep quantum information protected.  For near term architectures, stabilizer codes\cite{Gottesman98} have emerged as the leading candidate for active error correction in quantum hardware, with small scale architectures actively being developed and deployed\cite{all the stabilizers}.
+Quantum memories are an essential component for many quantum technologies, including quantum computing and quantum repeaters. In analogy to modern classical memories, one ideally wants a stable quantum memory that requires little or no active intervention and error correction. Unfortunately, no physical system that passively preserves quantum information indefinitely at finite temperatures and in an experimentally accessible number of dimensions is known \cite{Terhal:2015ks}. Instead, the operation of all known practical quantum memories require a combination of passive elements (i.e. dissipative cooling) and active measurement and correction cycles to keep quantum information protected.  In this work, we study the degree to which the amount of active measurement and correction can be reduced while maintaining quantum memory stability (our notion of stability, to be quantified later, corresponds to exponentially long lifetime for encoded states at some finite threshold temperature). We develop a new decoding and correction protocol that enables one to trim the number of measurements to a fraction of the complete set of measurements normally considered, and still maintain quantum memory stability. 
+
+We restrict our attention to quantum memories defined through stabilizer codes. For near term architectures, stabilizer codes\cite{Gottesman98} have emerged as the leading candidate for encoding quantum information and subsequent active error correction in quantum hardware, with small scale architectures actively being developed and deployed\cite{all the stabilizers}. \red{A tremendous amount of effort has gone into developing novel decoding schemes for stabilizer codes.  Cite Adrian Hutter, Harrington, Others.  More Background.}
  
- A tremendous amount of effort has gone into developing novel decoding schemes for stabilizer codes.  Cite Adrian Hutter, Harrington, Others.  More Background.
+ In previous work \cite{Freeman2014}, we analyzed the finite temperature dynamics of the toric code, verifying the well-known no-go theorems for the upper bound to the lifetime of the toric code at finite temperature \needcite.  Using this analysis, we were able to construct a measurement-free protocol for protecting the encoded qubits of the toric code \cite{Freeman2016}, but these protocols again were limited by the no-go theorems, and only provided a multiplicative constant increase to the lifetime.  
  
- In previous work, we analyzed the finite temperature dynamics of the toric code, verifying the well-known no-go theorems for the upper bound to the lifetime of the toric code at finite temperature.  Using this analysis, we were able to construct a measurement-free protocol for protecting the encoded qubits of the toric code, but these protocols again were limited by the no-go theorems, and only provided a multiplicative constant increase to the lifetime.  
+Building off this previous work, here we examine the extent to which a limited amount of measurement can increase the lifetime of stabilizer codes with string-like excitations.  In sum, we demonstrate an algorithm that, for any constant density of measurements for a stabilizer code with stringlike excitations undergoing dissipation at a fixed temperature, a threshold can be achieved.  The threshold temperature scales with the amount of measurement used---fewer measurements result in a smaller threshold temperature, whereas more complete measurement raises the threshold temperature.  This tradeoff is commensurate with and complements what is known about decoding the stabilizer codes in the presence of \emph{noisy}, but complete measurements.
  
- In this work, we examine the extent to which a limited amount of measurement can increase the lifetime of stabilizer codes with string-like excitations.  In sum, we demonstrate an algorithm that, for any constant density of measurements for a stabilizer code with stringlike excitations undergoing dissipation at a fixed temperature, a threshold can be achieved.  The threshold temperature scales with the amount of measurement used---fewer measurements result in a smaller threshold temperature, whereas more complete measurement raises the threshold temperature.  This tradeoff is commensurate with and complements what is known about decoding the stabilizer codes in the presence of \emph{noisy}, but complete measurements.
- 
- The remainder of the manuscript is structure as follows:  Section \ref{sec:stabfintemp} briefly reviews the theoretical tools used for performing simulation of stabilizer codes at finite temperature.  The content of this section is also expanded upon in refs \cite{Freeman2014,Freeman2016}.  Section \ref{sec:ecc_alg} includes the full description of our few-measurement algorithm, including a discussion of the expected low temperature error processes that cause the algorithm to fail, and a heuristic justification for the expectation of a threshold at low temperature.  Section \ref{sec:experiments} details our numerical investigations of our algorithm for the 1D Ising model.  Finally, Sec. \ref{sec:tc_alg} sketches how this algorithm could be generalized to higher dimensions, and Sec. \ref{sec:discussion} provides some concluding analysis and discussion.
+ The remainder of the manuscript is structured as follows:  Section \ref{sec:stabfintemp} briefly reviews the theoretical tools used for performing simulation of stabilizer codes at finite temperature.  The content of this section is also expanded upon in refs \cite{Freeman2014,Freeman2016}.  Section \ref{sec:ecc_alg} includes the full description of our few-measurement algorithm, including a discussion of the expected low temperature error processes that cause the algorithm to fail, and a heuristic justification for the expectation of a threshold at low temperature.  Section \ref{sec:experiments} details our numerical investigations of our algorithm for the 1D Ising model.  Finally, Sec. \ref{sec:tc_alg} sketches how this algorithm could be generalized to higher dimensions, and Sec. \ref{sec:discussion} provides some concluding analysis and discussion.
  
  
  
@@ -117,14 +122,14 @@
 \subsection{Definitions}
 \label{sec:Defs}
 %%%%%%%%%%%%%%%%%%%%%%
-In this section, we briefly review the theory of the 1D Ising model, as well as the Lindblad formalism for evaluating its finite temperature dynamics.  The Hamiltonian for the 1D Ising model is
+In this section, we briefly review the theory of the 1D Ising model, as well as the Markovian open quantum systems formalism for evaluating its finite temperature dynamics.  The Hamiltonian for the 1D Ising model is
 
 \begin{align}
 \Hising = -\Delta \Sigma_i \sigma^i_z \sigma^{i+1}_z
 \label{eq:isingham}
 \end{align}
 
-where, for the remainder of the manuscript, unless explicitly stated otherwise, we assume $\Delta=1$.  This also fixes our units for temperature.  This is exactly the hamiltonian version of the repetition stabilizer \emph{code}\cite{Freeman2016}.  Note that the terms $\sigma^i_z \sigma^{i+1}_z$ exactly correspond to the parity check stabilizer operators of the repetition code.  Confer with Table \ref{tab:code_vs_hamiltonian} for the correspondences between the stabilizer hamiltonian and stabilizer code versions of the 1d Ising model.
+where, for the remainder of the manuscript, unless explicitly stated otherwise, we assume $\Delta=1$.  This also fixes our units for temperature.  This is exactly the Hamiltonian version of the repetition stabilizer \emph{code}\cite{Freeman2016}.  Note that the terms $\sigma^i_z \sigma^{i+1}_z$ exactly correspond to the parity check stabilizer operators of the repetition code.  Confer with Table \ref{tab:code_vs_hamiltonian} for the correspondences between the stabilizer Hamiltonian and stabilizer code versions of the 1d Ising model.
 
 \begin{table}
 \begin{center}
@@ -143,11 +148,11 @@ where, for the remainder of the manuscript, unless explicitly stated otherwise, 
 
 In the parlance of the 1D Ising model, bit flip errors are often also classified via the dual variables called \emph{domain walls}.  Domain walls are simply locations on the 1D Ising chain where a stabilizer operator yields a measurement of $-1$---i.e., locations where neighboring spins point in different directions.  With periodic boundary, the number of these locations is always a multiple of two, and a single bit flip event either creates a pair of such domain walls, deletes a pair of domain walls, or causes a domain wall to translate by one unit.  
 
-Whether considered as a code or as a hamiltonian, the condition for whether a state of the system with errors present can be reliably returned to an encoded state is the same: so long as less than have the system has had errors, a majority rule decoder that has access to measurements of the full set of stabilizers ${\sigma^i_z \sigma^{i+1}_z}$ will reliably be able to correctly remove errors.  When errors are completely independent (i.e., at very high temperature), we can define random variables $x_i=1$ when an error occurs on site $i$, and $0$ otherwise.  If these errors occur with probability $p$ on each spin, independently at random every error detection cycle, then Chernoff's bound gives an upper bound to the probability of an error in the encoded space, $P(\Sigma_i x_i \geq L/2) \leq \rm{exp}[-Lp\frac{\delta^2}{2+\delta}]$ for $\delta=1/2p-1$.  Thus, for complete measurement, errors in the encoded subspace are exponentially suppressed in system size, so long as the error rate is sufficiently small.
+Whether considered as a code or as a Hamiltonian, the condition for whether a state of the system with errors present can be reliably returned to an encoded state is the same: so long as less than half the system has had errors, a majority rule decoder that has access to measurements of the full set of stabilizers ${\sigma^i_z \sigma^{i+1}_z}$ will reliably be able to correctly remove errors.  When errors are completely independent (i.e., at very high temperature), we can define random variables $x_i=1$ when an error occurs on site $i$, and $0$ otherwise.  If these errors occur with probability $p$ on each spin, independently at random every error detection cycle, then Chernoff's bound gives an upper bound to the probability of an error in the encoded space, $P(\Sigma_i x_i \geq L/2) \leq \rm{exp}[-Lp\frac{\delta^2}{2+\delta}]$ for $\delta=1/2p-1$.  Thus, for complete measurement, errors in the encoded subspace are exponentially suppressed in system size, so long as the error rate is sufficiently small.
 
 For much of the remainder of the manuscript, we consider how the decoding scheme changes when one does \emph{not} have access to the full set of stabilizer measurements.
 
-Following \ref{Freeman2016}, we consider a simple local Ohmic, Markovian bath to model finite temperature effects.  This amounts to solving the Lindblad equation,
+Following \ref{Freeman2016}, we consider a simple local Ohmic, Markovian bath to model finite temperature effects.  This is modeled by the following master equation in Lindblad form:
 
 \begin{align}
 \dot{\rho }=\sum_{\omega }{2c_{\omega }\rho c^{\dagger }_\omega}-c^{\dagger }_{\omega }c_{\omega }\rho -\rho c^{\dagger }_{\omega }c_{\omega }, \label{eq:Lindblad}
@@ -158,8 +163,7 @@ for the density matrix $\rho$, with Lindblad operators $c_{\omega }$ chosen to t
 \begin{equation}
 \left \{ c_\omega \right \} = \left \{ \sqrt{\gamma(0)} T_{b}, \sqrt{\gamma(1)} D^\dagger_{b}, \sqrt{\gamma(-1)} D_{b} \right\} 
 \end{equation}
-
-where $D_{b}$ dissipates a pair of domain walls,  $D^\dagger_{b}$ creates a pair of domain walls, and where $T_{b}$ translates a domain wall by one unit, and $\gamma(\cdot)$ is a rate function dependent on the details of the bath.  This bath is chosen to model the dynamics of local, single bit-flip errors.  In the Pauli basis, these operators take the following form.
+where $D_{b}$ dissipates a pair of domain walls,  $D^\dagger_{b}$ creates a pair of domain walls, $T_{b}$ translates a domain wall by one unit, and $\gamma(\cdot)$ is a rate function dependent on the details of the bath.  This bath is chosen to model the dynamics of local, single bit-flip errors.  In the Pauli basis, these operators take the following form.
 
 \begin{align}
 D^\dagger_{b}= &\frac{1}{4} \left(I \sigma_x I \right)\left(1+I \sigma_z \sigma_z\right)\left(1+ \sigma_z \sigma_z I\right) \notag \\
@@ -186,11 +190,11 @@ We define its bare lifetime to be $\Gamma_0^{-1}$.
 
  The vast majority of the error correction literature assumes an error model akin to an ``infinite temperature limit''.  More precisely, an array of qubits receives errors from some set of error operators ${E_i}$ independently at random with some probability $p$ every error correction cycle.  The threshold theorems state that there exists some critical error probability $p_c$ below which it is possible to return an error correcting code to its encoded state with unit probability for asymptotically large systems.  For the toric code, $p_c\approx.11$.
  
- Contrariwise, thresholds at finite temperature are usually quoted in terms of a critical \emph{temperature}.  That is, there must exist some critical temperature $T_c$ below which codes can be reliably corrected.  Unfortunately, this definition obscures a great deal of physics---different choices of bath model can greatly affect the dynamics of the error processes, to the extent that a quoted ``critical temperature'' often implicitly specifies a choice of bath.  Because different bath interactions can give rise to different system dynamics, the choice of bath also directly affects the strategy used for error correction.  For example, it is known that the toric code's threshold temperature is altered by considering a correlated bath rather than an Ohmic one \cite{Novais13}.
+ Contrariwise, thresholds at finite temperature are usually quoted in terms of a critical \emph{temperature}.  That is, there must exist some critical temperature $T_c$ below which codes can be reliably corrected.  Unfortunately, this definition obscures a great deal of physics---different choices of bath model can greatly affect the dynamics of the error processes, to the extent that a quoted ``critical temperature'' often implicitly specifies a choice of bath model.  Because different bath interactions can give rise to different system dynamics, the choice of bath also directly affects the strategy used for error correction.  For example, it is known that the toric code's threshold temperature is altered by considering a correlated bath \red{time or space correlated?} rather than an uncorrelated one \cite{Novais13}.
  
- The choice of an Ohmic bath operationally sets the scaling of Lindblad operators that do not exchange energy with the environemnt.  While detailed balance enforces the ratio of the rates of domain wall creation and annihilation to boltzmann-like scaling---i.e., $\gamma(1)/\gamma(-1) = \rm{exp}(-1/T)$---the rate of error processes that occur which do not involve energy exchange with the bath scales linearly with temperature.  In other words, $\gamma(0) \sim T$.  This follows from taking the $\omega\rightarrow0$ limit of  Eq. \ref{eq:gammadef}.  Ultimately, this means that the hopping rate of domains walls is controlled by this choice of bath model.  At non-infinite temperatures, this introduces subtle correlations into the patterns of errors that effect the system, so it's no longer possible to talk about something like an ``independent error probability per site''.  
+ The choice of an Ohmic bath operationally sets the scaling of Lindblad operators that do not exchange energy with the environment \red{I don't get this last sentence. Is this all that this choice of bath does?}.  While detailed balance enforces the ratio of the rates of domain wall creation and annihilation to Boltzmann-like scaling (i.e., $\gamma(1)/\gamma(-1) = \exp(-1/T)$), the rate of error processes that do not involve energy exchange with the bath scales linearly with temperature.  In other words, $\gamma(0) \sim T$, which follows from taking the $\omega\rightarrow0$ limit of  Eq. \ref{eq:gammadef}.  Ultimately, this means that the hopping rate of domains walls is controlled by this choice of bath model \red{do you mean "...is controlled by temperature according to this choice of bath model"?}.  At finite temperatures, this introduces correlations into the patterns of errors that effect the system, and so it is no longer possible to talk about an ``independent error probability per site''.  
  
- In the most extreme case, at sufficiently low temperature, when errors occur they're most often almost immediately dissipated by the bath.  Because domain walls that are not immediately adjacent are not able to be dissipated by the bath, the system occasionally becomes ``trapped'' in the first excited state by a rare pair creation followed by pair hopping event---i.e. a $D^\dagger_{b}$ followed by a $T_{b}$---before the bath can dissipate the excitation.  Then any subsequent errors are overwhelmingly more likely to act on existing pair of domain walls, translating them around in a one-dimensional random walk.
+ In the most extreme case, at sufficiently low temperature, errors are most often immediately dissipated by the bath upon creation.  However, because domain walls that are not immediately adjacent cannot be dissipated by the bath, the system occasionally becomes ``trapped'' in the first excited state by a rare pair creation followed by pair hopping event -- i.e., a $D^\dagger_{b}$ followed by a $T_{b}$ -- before the bath can dissipate the excitation.  Then any subsequent errors are overwhelmingly more likely to act on existing pair of domain walls, translating them around in a one-dimensional random walk.
  
  Thus, error correction for the 1D Ising model at low temperature with this sort of bath dynamics is equivalent to attempting to identify these randomly-migrating rare pairs of domain walls.  While a majority-rule decoding scheme works in both low and high temperature limits for the Ising model, if the number of measurement resources is restricted, the standard majority rule scheme breaks down.  
  
@@ -432,7 +436,8 @@ More fundamentally, our algorithm can be understood as an entropy reduction sche
 
 %%%%%%%%%%%%%%%%%%%%%%
 \section{Acknowledgments}
-This material is based upon work supported by DARPA under Grant No. 3854-UCB-AFOSR-0041 and by the National Science Foundation under Grants No. PIF-0803429 and No. CHE-1213141.  CDF was supported by the NSF Graduate Research Fellowship under Grant DGE-1106400 and by the DOE Office of Science Graduate Student Research (SCGSR) program under contract number DE‐SC0014664.
+This material is based upon work supported by DARPA under Grant No. 3854-UCB-AFOSR-0041 and by the National Science Foundation under Grants No. PIF-0803429 and No. CHE-1213141.  CDF was supported by the NSF Graduate Research Fellowship under Grant DGE-1106400 and by the DOE Office of Science Graduate Student Research (SCGSR) program under contract number DE‐SC0014664. MS was supported by the Laboratory Directed Research and Development program at Sandia National Laboratories.  Sandia National Laboratories is a multi-mission laboratory managed and operated by Sandia Corporation, a wholly owned subsidiary of Lockheed Martin Corporation, for the U.S. Department of Energy'�s National Nuclear Security Administration under contract DE-AC04-94AL85000. 
+
 %%%%%%%%%%%%%%%%%%%%%%
 
 
