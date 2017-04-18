@@ -209,7 +209,7 @@ We define its bare lifetime to be $\Gamma_0^{-1}$.
 
 \subsection{The Algorithm}
 
-In this section, we sketch a new algorithm which reliably dissipates defects in the 1D Ising model below a threshold temperature which we determine numerically.  The primary technical innovation of this algorithm is that it does not require measurement of a complete set of stabilizer operators for a given stabilizer code---only a fixed subset.  We assume that the system is subject to periodic measurements on periodically spaced measurement ``patches'', that measurement readout and processing occurs much faster than any system timescale, and that the system is subject to a thermal bath as described in Sec. \ref{sec:Defs}.
+In this section, we sketch a new algorithm which reliably dissipates defects in the 1D Ising model below a threshold temperature, which we determine numerically.  The primary technical innovation of this algorithm, and its generalization to quantum memories based on any stabilizer Hamiltonian, is that it does not require measurement of the complete set of stabilizer operators for a given stabilizer code---only a fixed subset.  We assume that the system is subject to periodic measurements on periodically spaced measurement ``patches'', that measurement readout and processing occurs much faster than any system timescale, and that the system is subject to a thermal bath as described in Sec. \ref{sec:Defs}.
 
 \begin{figure}
 \begin{center}
@@ -219,68 +219,59 @@ In this section, we sketch a new algorithm which reliably dissipates defects in 
 \label{fig:detect_swap}
 \end{figure}
 
-Algorithm:
+The algorithm can be summarized in fives steps:
 
 1. Measure stabilizers on patches, keeping record of the age of defects that are already on patches, as well as defect locations.
 
-2. Perform ``centering'' on patches with defects (see \figref{fig:detect_swap}).
+2. Perform ``centering'' on patches with defects (see \figref{fig:detect_swap}), based on centering protocol introduced in Ref. \cite{Freeman2016}.
 
-3. Calculate probability of fusion (i.e., Eq. \ref{eq:bayes_simple}) for all pairs of measured defects residing on the measurement sites.
+3. Calculate probability of fusion (explicitly given in Eq. \ref{eq:bayes_simple}) for all pairs of measured defects residing on the measurement sites.
 
-4. Probablistically perform error correction based on probabilities calculated in 3.
+4. Probabilistically perform error correction based on probabilities calculated in step 3.
 
 5. Repeat
 
-Step 2) encourages defects to remain ``stuck'' on measurement patches.  This can be performed entirely unitarily by the $DSWAP$ operator, which takes the following form in the pauli basis,
-
+Step 2 encourages defects to remain localized at measurement patches.  This centering protocol can be performed entirely unitarily by the $DSWAP$ operator, which takes the following form in the Pauli basis,
 \begin{align}
 \rm{DSWAP} &= \frac{1}{2} \left(III + I\sigma_x I + \sigma_z I \sigma_z - \sigma_z \sigma_x \sigma_z \right)
 \end{align}
 
+The centering process aids the probability of fusion calculation by ensuring that the coordinates and measurement times are representative of when and where defects are actually created.  If defects escape from measurement patches, then upon being measured again, the time recorded by the measurement patch now underestimates how old the defect actually is, biasing the probability estimate.  This centering operation greatly reduces the probability of defect escape.
 
-This centering process aids the probability of fusion calculation by ensuring that the coordinates and measurement times are representative of when and where defects are actually created.  If defects escape from measurement patches, then upon being measured again, the time recorded by the measurement patch now underestimates how old the defect actually is, biasing the probability estimate.  This centering operation greatly reduces the probability of defect escape.
-
- Note the pattern of $\rm{DSWAP}s$ used in \figref{fig:detect_swap} also swaps the neighboring, \emph{unmeasured} defect onto the measurement patch.  This is to ensure that the protocol does not inadvertently create a new separated pair of domain walls in the system by shifting only one domain wall in a potentially adjacent pair. 
+ Note that the pattern of $\rm{DSWAP}s$ used in \figref{fig:detect_swap} also swaps the neighboring, \emph{unmeasured} defect onto the measurement patch.  This is to ensure that the protocol does not inadvertently create a new separated pair of domain walls in the system by shifting only one domain wall in a potentially adjacent pair. 
  
 \subsection{Fusion Probability Calculation}
 \label{sec:bayes_prob_calc}
 
 %************************TRIM SUBSTANTIALLY AND PUT IN APPENDIX
 
-To properly perform error correction, we need to be able to estimate the probability that two given measured defects are a pair, given that they have been measured at two particular measurement patches at two different times.  For notational convenience, we define:
-
+To perform error correction properly, we need to be able to estimate the probability that two given measured defects are a pair, given that they have been measured at two particular measurement patches at two different times.  For notational convenience, we define:
 \begin{align}
-d_1 : d_2 \equiv \rm{defect}\ d_1\ \rm{and}\ d_2\ \rm{are\ a\ pair}
+d_1 : d_2 \equiv {\rm defect}\ d_1\ {\rm and}\ d_2\ {\rm are\ a\ pair}
 \end{align}
-
 and
-
 \begin{align}
-d_i^{x_1,t_1} \equiv \rm{defect}\ d_i\ \rm{measured\ at\ time}\ t_1\ \rm{at\ patch}\ x_1
+d_i^{x_1,t_1} \equiv {\rm defect}\ d_i\ {\rm measured\ at\ time}\ t_1\ {\rm at\ patch}\ x_1
 \end{align}
 
-Then, we aim to calculate:
-
+Then, we aim to calculate the fusion probaility:
 \begin{align}
-P(d_1:d_2 | d_1^{x_1,t_1} \wedge d_2^{x_2,t_2})
+P(d_1:d_2 | d_1^{x_1,t_1} \wedge d_2^{x_2,t_2}),
 \end{align}
+i.e., the probability that two detects measured at spacetime coordinates $(x_1,t_1)$ and $(x_2,t_2)$ are part of the same defect pair, and therefore should be fused in a correction step.
 
-Because this probability is cumbersome to calculate explicitly, we proceed via Bayes rule:
-
+To calculate this probability, we proceed via Bayes rule: 
 \begin{align}
 \label{eq:bayes}
 &P(d_1:d_2 | d_1^{x_1,t_1} \wedge d_2^{x_2,t_2}) = \\ \notag
 &\frac{P(d_1^{x_1,t_1} \wedge d_2^{x_2,t_2} | d_1:d_2) P(d_1 : d_2)}{P(d_1^{x_1,t_1}\wedge d_2^{x_2,t_2})}
 \end{align}
-
-The individual terms in the right hand side of equation \ref{eq:bayes} are straightforward to interpret.  $P(d_1^{x_1,t_1} \wedge d_2^{x_2,t_2} | d_1:d_2)$ represents the probability that two measured defects would be at spacetime coordinates $(x_1,t_1)$ and $(x_2,t_2)$ given that they are indeed a pair.  This can be related to the probability that a one dimensional diffusion process with diffusion constant $D$ will have performed an excursion of length $|x_2-x_1|$ in time $|t_2-t_1|$, and takes the form,
-
+The individual terms on the right hand side of equation \ref{eq:bayes} are straightforward to interpret.  $P(d_1^{x_1,t_1} \wedge d_2^{x_2,t_2} | d_1:d_2)$ represents the probability that two measured defects would be at $(x_1,t_1)$ and $(x_2,t_2)$ given that they are indeed a pair.  This can be related to the probability that a one dimensional diffusion process with diffusion constant $D$ will have performed an excursion of length $|x_2-x_1|$ in time $|t_2-t_1|$, and takes the form,
 \begin{align}
 \label{eq:bayesformula}
-P(d_1^{x_1,t_1} \wedge d_2^{x_2,t_2} | d_1:d_2) = 1 - \rm{erf}\bigg(\frac{|x_2-x_1|}{2\sqrt{D |t_2 - t_1|}}\bigg) 
+P(d_1^{x_1,t_1} \wedge d_2^{x_2,t_2} | d_1:d_2) = 1 - {\rm erf}\bigg(\frac{|x_2-x_1|}{2\sqrt{D |t_2 - t_1|}}\bigg) 
 \end{align}
-
-for a random walk with diffusion constant $D$.  This represents the probability that a random walk will not perform an excursion of distance $|x_2-x_1|$ in a time $t_2 - t_1$.  For our analysis, we will choose $D\propto \gamma_0$.  The exact correspondence between $D$ and $\gamma_0$ depends on the details of the error correction algorithm itself, so, in practice, we treat the constant of proportionality as an empirically tuned parameter.
+This represents the probability that a random walk will not perform an excursion of distance $|x_2-x_1|$ in a time $t_2 - t_1$.  \red{This explanation confuses me. Why isn't this just a Gaussian?} For our analysis, we will choose $D\propto \gamma_0$.  The exact correspondence between $D$ and $\gamma_0$ depends on the details of the error correction algorithm itself, so, in practice, we treat the constant of proportionality as an empirically tuned parameter.
 
 $P(d_1 : d_2)$ represents the probability that two measured defects, $d_1$ and $d_2$, are in fact a pair.  Finally, $P(d_1^{x_1,t_1}\wedge d_2^{x_2,t_2})$ is the probability that two defects are measured, one at $(x_1,t_1)$, and the other at $(x_2,t_2)$.  As we discuss in Appendix \ref{sec:bayesdecoder}, these factors are not as important for the decoding scheme as Eq. \ref{eq:bayesformula}.  In practice, we find that using the expression from Eq. \ref{eq:bayesformula} alone is sufficient to provide resilient error correction.  We defer further discussion to the appendix.
  
@@ -288,17 +279,15 @@ $P(d_1 : d_2)$ represents the probability that two measured defects, $d_1$ and $
  \subsection{Common error modes and analysis}
  \label{sec:threshold}
  
- The two primary failure modes of the error correction procedure as temperature is made large are (1) defects escaping measurement patches, and (2) defects being paired incorrectly.  (1) can be suppressed by working with large measurement patches, as the escape escape timescale is exponential in the number of sites within the measurement patch---i.e., it scales like $(1/\gamma_0)^{\rm{\#\ of\ sites\ on\ patch}}$.  (2) can be suppressed to a degree, but at high enough temperature, will eventually happen with high probability, as is the case in the full-measurement version of the protocol.  If too many errors are introduced between measurement cycles, it becomes impossible to correct the system even in principle because the syndrome measurements can no longer be unambiguously decoded.  At sufficiently low temperature, however, with some assumptions, our algorithm can extend the lifetime of the system exponentially in system size.
+ The two primary failure modes of the error correction procedure as temperature is made large are \red{Are there no failure modes for low temperature?} (1) defects escaping measurement patches, and (2) defects being paired incorrectly.  Failure mode 1 can be suppressed by working with large measurement patches, as the escape timescale is exponential in the number of sites within the measurement patch---i.e., it scales like $(1/\gamma_0)^{\rm{\#\ of\ sites\ on\ patch}}$.  Failure mode 2 can be suppressed to a degree, but at high enough temperature, will eventually happen with high probability, as is the case in the full-measurement version of the protocol.  If too many errors are introduced between measurement cycles, it becomes impossible to correct the system even in principle because the syndrome measurements can no longer be unambiguously decoded.  At sufficiently low temperature, however, with some assumptions, our algorithm can extend the lifetime of the system exponentially in system size.
  
- Suppose that (a) defects are efficiently trapped by the measurement patches, and (b) temperature is low so that there is $\rho<<1$ defect pair per measurement patch.  In this regime, condition (a) guarantees that defects don't escape measurement patches.  Then, the only error pathway is a sequence of incorrect, but nonetheless ``plausible'' error correction operations, whereby defects are paired with defects that are not their own pair.  
- 
+ Suppose that (a) defects are efficiently trapped by the measurement patches, and (b) temperature is low so that there is $\rho \ll 1$ defect pair per measurement patch.  In this regime, condition (a) guarantees that defects do not escape measurement patches.  Then, the only error pathway is a sequence of incorrect, but nonetheless ``plausible'' error correction operations, whereby some sdefects are paired with defects that are not their own pair.  
 %************************Make explicit here that it's a heuristic argument.  Because the error processes in our model are difficult to etc. etc. etc.
-
- To upper bound this error rate, we need to consider lowest order error processes more carefully.  At low temperatures---i.e., low densities of errors---the primary breakdown of the corrective step occurs when a defect is paired with another defect that is not its true pair.  This occurs because its pairing defect has not yet been measured.  In other words, one defect of a pair is measured, and the other defect spends ``too long'' migrating around in the unmeasured bulk region.  Suppose, then, that the average amount of time a defect spends sitting on a measurement patch is $\tau_s$, and the average amount of time it takes a defect to be detected on a measurement patch, after creation, is $\tau_d$.  Further suppose $\tau_s/\tau_d = \delta << 1$---that is, on average, defects are unlikely to escape from a measurement patch over the timescale it takes a defect to migrate within the bulk region to a measurement patch.
+ To upper bound this error rate, note that such erroneous pairing occurs because one member of a paired defect has not yet been measured.  In other words, one defect of a pair is measured, and the other defect spends ``too long'' migrating around in the unmeasured bulk region.  Suppose that the average amount of time a defect spends sitting on a measurement patch is $\tau_s$, and the average time it takes a defect to be detected on a measurement patch, after creation, is $\tau_d$.  Further suppose $\tau_s/\tau_d = \delta \ll 1$---that is, on average, defects are unlikely to escape from a measurement patch over the timescale it takes a defect to migrate within the bulk region to a measurement patch.
 
  Treating the full dynamics of errors is difficult, so we first consider a different, simpler error dynamics.  First, we argue how, in the presence of this simpler error model, our algorithm provides an exponentially long lifetime in system size.  Then, we argue how this simpler error model is actually more pessimistic with respect to possible error processes than the true error dynamics---that is, we expect the real model to have a \emph{better} lifetime scaling than would be expected from the simple error model.
  
- The simple error model is defined as follows:  suppose that a single pair of defects is in a system, and that no new pairs will be introduced.  Further, suppose that there's an error process that occasionally increases the distance between this pair by an amount $2\sqrt{\gamma_0 \delta t}$, for hopping rate $\gamma_0$ and for system time $\delta t$.  Note that this means the error process acts on longer distance scales as system time increases.  The particular form of this error process is chosen to mimic a spurious error correction event, where a pair of defects is ``corrected'', but this pair of defects was not a real pair.  As time increases, the characteristic distance over which this error process could occur also increases, in accordance with the typical pair-wise separation between two defects performing a random walk.  This typical distance is exactly the factor used by the error correction algorithm to determine if a pair of defects should be corrected or not.
+ The simple error model is defined as follows:  suppose that a single pair of defects is in a system, and that no new pairs will be introduced.  Further, suppose that there is an error process that occasionally increases the distance between this pair by an amount $2\sqrt{\gamma_0 \delta t}$, for hopping rate $\gamma_0$ and for system time $\delta t$.  Note that this means the error process acts on longer distance scales as system time increases. \red{I don't get this. Can't this happen with a local error process?}  The particular form of this error process is chosen to mimic a spurious error correction event, where a pair of defects is ``corrected'', but this pair of defects was not a real pair.  As time increases, the characteristic distance over which this error process could occur also increases, in accordance with the typical pair-wise separation between two defects performing a random walk.  This typical distance is exactly the factor used by the error correction algorithm to determine if a pair of defects should be corrected or not.
 
  If this error process happens every $\tau_{\epsilon}$, then an uncorrectable error will occur if the bulk defect remains undetected up until it crosses half the system.  For patches of size $\lambda$, the probability that this occurs is roughly $(\tau_{\epsilon} / \tau_d)^{k}$, where $k$ is the number of times the error process must occur for the error process to have separated the defects a distance $(L/2\lambda)$ and $\tau_d$ is the timescale associated with a non-erroneous error correction operation.  Because this error process happens approximately every $\tau_{\epsilon}$, after a timescale $q*\tau_{\epsilon}$, the defect pairs will have been separated a distance $\Sigma^q_{i=1} \sqrt{i * \gamma_0 \tau_{\epsilon}}$, assuming that they are never correctly paired.  This sum $\Sigma^q_{i=1} \sqrt{i}$ grows asymptotically like $q^{3/2}$.  Thus, $k$ then scales approximately like $(L/\lambda)^{2/3}$.
  
@@ -310,29 +299,30 @@ $P(d_1 : d_2)$ represents the probability that two measured defects, $d_1$ and $
 
 For this system, $\tau_{\epsilon}$ is much smaller than $\tau_d$, thus the full probability of erroneous corrective operations is exponentially small in system size.
  
- This probability serves as an upper bound because it is extremely pessimistic about the sorts of error processes occurring.  Note that in the real system, a spurious error correction process that effectively increases the distance between a pair of defects also reduces the total number of defects by two.  Thus, while our toy error model is ``non-interacting''---that is, it assumes $L/\lambda$ independent error processes which, in sum, take the form described in equation \ref{eq:err_scaling}---a more careful treatment of the error process, including interactions between defects, as in the real model, would result in an error probability \emph{smaller} than the one calculated here.
+ This probability serves as an upper bound because it is extremely pessimistic about the sorts of error processes occurring.  Note that in the real system, a spurious error correction process that effectively increases the distance between a pair of defects also reduces the total number of defects by two.  Thus, while our toy error model is ``non-interacting''---that is, it assumes $L/\lambda$ independent error processes which, in sum, take the form described in Eq. \ref{eq:err_scaling}---a more careful treatment of the error process, including interactions between defects, as in the real model, would result in an error probability \emph{smaller} than the one calculated here.
  
- In the following section, we provide numerical evidence that the lifetime of the Ising model in the presence of the protocol scales quasi-exponentially with the number of measurement patches, as anticipated by our upper bound \ref{eq:err_scaling}.
+ In the following section, we provide numerical evidence that the lifetime of the Ising model in the presence of the protocol scales quasi-exponentially \red{why quasi?} with the number of measurement patches, as anticipated by the upper bound in Eq.\ref{eq:err_scaling}.
  
 
  
  %%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%
-\section{Finite Temperature Simulation Experiments}
+\section{Finite Temperature Simulations}
 \label{sec:experiments}
 %%%%%%%%%%%%%%%%%%%%%%
 
 In this section, we examine the behaviour of the protocol at different system sizes, temperatures, and measurement fractions.  System size scalings are generally reported in terms of scaling with the number of \emph{measurement patches}.  We make this choice because the size of the measurement patches is the smallest length scale relevant to the algorithm, and thus controls the majority of the scaling behavior.  Perhaps unsurprisingly, systems of radically different size but with the same number of measurement patches have fairly comparable lifetimes (e.g., size 200 system with 10 patches versus size 100 system with 10 patches).  We elaborate on the scaling of the measurement fractions further in the discussion.
+\red{Define measurement fraction, $\lambda$, $\lambda_m, \lambda_b$ here.}
 
 \begin{figure}
 \begin{center}
 \scalebox{1}{\includegraphics[width=1.0\columnwidth]{LifetimeVsTemperature.pdf}}
 \end{center}
-\caption{Lifetime of various system sizes as a function of Temperature.  Notice the transition between no-effect, and significant lifetime improvement near $T=.16$.}
+\caption{Lifetime of various system sizes as a function of temperature.  Notice the transition between no-effect, and significant lifetime improvement near $T=.16$. \red{I thought $\lambda$ was measurement patch size. Use a different symbol?}}
 \label{fig:LifetimeVsTemperature}
 \end{figure}
 
-\figref{fig:LifetimeVsTemperature} depicts the scaling of the system lifetime with temperature.  At low temperatures, the system lifetime increases dramatically with both lower temperatures, and larger system size.  Due to finite size effects, it's difficult to extract an unambiguous threshold temperature, but below $T\approx.13$, the lifetime manifestly increases with larger system size.  
+\figref{fig:LifetimeVsTemperature} depicts the scaling of the system lifetime with temperature.  At low temperatures, the system lifetime increases dramatically with both lower temperatures, and larger system size.  Due to finite size effects, it is difficult to extract an unambiguous threshold temperature, but below $T\approx.13$, the lifetime manifestly increases with larger system size.  \red{We empirically define a threshold temperature by ...}.
 
 \begin{figure}
 \begin{center}
@@ -342,7 +332,7 @@ In this section, we examine the behaviour of the protocol at different system si
 \label{fig:LifetimeVsSystemSize}
 \end{figure}
 
-This is clearer in \figref{fig:LifetimeVsSystemSize}, which depicts the scaling of the lifetime with system size directly.  Note that, for models above $T\approx.13$, larger system sizes asymptote to a fixed lifetime improvement, whereas for models below $T\approx.13$, the lifetime grows quasimonotonically with system size.  Beyond $\lambda\approx15$, finite size effects are significantly reduced.  This is because small-system sizes cannot easily suppress second order errors, such as defects escaping from measurement patches or multiple pairs of defects in the system.  Such errors are actually uncorrectable for systems of size $\lambda\leq4$---hence the plateau appearing around $\lambda=7$ to $\lambda=12$.  This plateau is of height $O((\Gamma_0^2)^{-1})$---the characteristic timescale of these ``second-order'' events.  This scaling is more clear when plotting the liftime divided by the bare lifetime squared---i.e. $\Gamma / \Gamma_0^2$---as in \figref{fig:LifetimeVsSystemSizeReduced}.
+This is clearer in \figref{fig:LifetimeVsSystemSize}, which depicts the scaling of the lifetime with system size directly.  Note that, for models above $T\approx.13$, larger system sizes asymptote to a fixed lifetime improvement, whereas for models below $T\approx.13$, the lifetime grows quasimonotonically with system size.  Beyond $\lambda\approx15$, finite size effects are significantly reduced.  This is because small-system sizes cannot easily suppress second order errors, such as defects escaping from measurement patches or multiple pairs of defects in the system.  Such errors are actually uncorrectable for systems of size $\lambda\leq4$---hence the plateau appearing around $\lambda=7$ to $\lambda=12$.  This plateau is of height $O((\Gamma_0^2)^{-1})$---the characteristic timescale of these ``second-order'' events.  This scaling is more clear when plotting the liftime divided by the bare lifetime squared---i.e. $\Gamma / \Gamma_0^2$---as in \figref{fig:LifetimeVsSystemSizeReduced}. \red{What is the measurement fraction in Figs. 2-4?}
 
 %************************PUT IN TERMS OF SYSTEM SIZE
 %************************MAYBE REMOVE INTERMEDIATE SYSTEM SIZES - remove 12,16,24 from Fig. 2 or maybe just 4,8,16,32.
@@ -368,7 +358,7 @@ This is clearer in \figref{fig:LifetimeVsSystemSize}, which depicts the scaling 
 \label{fig:LifetimeVsMeasurementFraction}
 \end{figure}
 
-Another free parameter in the algorithm is the ratio of measured sites $\lambda_m$ to bulk sites $\lambda_b$.  For this work, we fixed $\lambda_m=3$ and varied $\lambda_b$.  \figref{fig:LifetimeVsMeasurementFraction} depicts the effect measuring fewer sites on the system lifetime as a function of Temperature for several different measurement fractions.  In sum, measuring a smaller fraction of the lattice causes the threshold temperature to shift downwards.  This scaling of the threshold temperature itself is depicted explicitly in \figref{fig:CriticalTempVsMeasurementFraction}.
+Another free parameter in the algorithm is the ratio of measured sites $\lambda_m$ to bulk sites $\lambda_b$.  For this work, we fixed $\lambda_m=3$ and varied $\lambda_b$ \red{Move this up and define the measurement fraction in terms of these}.  \figref{fig:LifetimeVsMeasurementFraction} depicts the effect measuring fewer sites on the system lifetime as a function of temperature for several different measurement fractions.  In sum, measuring a smaller fraction of the lattice causes the threshold temperature to shift downwards.  This scaling of the threshold temperature itself is depicted explicitly in \figref{fig:CriticalTempVsMeasurementFraction}.
 
 \begin{figure}
 \begin{center}
@@ -388,7 +378,7 @@ Another free parameter in the algorithm is the ratio of measured sites $\lambda_
 
 %************************EXPAND THIS PARAGRAPH A LITTLE
 
-Finally, in Fig. \ref{fig:LifetimeVsTemperatureVsEnergy}, we plot the lifetime of the system in the presence of the protocol at various energy scales $\Delta$.  By contrasting Figures \ref{fig:LifetimeVsMeasurementFraction} and \ref{fig:LifetimeVsTemperatureVsEnergy}, one can deduce the relative benefits of error suppression via more measurement resources versus error suppression via hamiltonian engineering (i.e., a larger gap to excitation).
+Finally, in Fig. \ref{fig:LifetimeVsTemperatureVsEnergy}, we plot the lifetime of the system in the presence of the protocol at various energy scales $\Delta$.  By contrasting Figures \ref{fig:LifetimeVsMeasurementFraction} and \ref{fig:LifetimeVsTemperatureVsEnergy}, one can deduce the relative benefits of error suppression via more measurement resources versus error suppression via hamiltonian engineering (i.e., a larger gap to excitation). \red{I think it would be better to put figure 7 before 6, and plot the threshold temperature as  function of m and $\Delta$ in figure 6. The this comparison can just refer to this new plot. }
 
 
 
@@ -398,16 +388,16 @@ Finally, in Fig. \ref{fig:LifetimeVsTemperatureVsEnergy}, we plot the lifetime o
 \label{sec:tc_alg}
 %%%%%%%%%%%%%%%%%%%%%%
 
- In this section, we sketch how the algorithm presented in Sec. \ref{sec:ecc_alg} generalizes to a higher dimensional stabilizer quantum memory---the toric code.  Where the dynamics of the 1D Ising model are typified by one dimensional random walks of domain walls, the nonequilibrium dynamics of the toric code are driven by two dimensional random walks of ``quasiparticle'' excitations.  Consider the toric code hamiltonian, Eq. \ref{eq:HTC}.
-
+ In this section, we sketch how the algorithm presented in Sec. \ref{sec:ecc_alg} generalizes to a higher dimensional stabilizer quantum memory---the toric code.  Where the dynamics of the 1D Ising model are typified by one dimensional random walks of domain walls, the nonequilibrium dynamics of the toric code are driven by two dimensional random walks of ``quasiparticle'' excitations.  Consider the toric code hamiltonian:.
  \begin{align}
 \Htc &= -\Delta_e \sum_v A_v -\Delta_m \sum_p B_p ,\label{eq:HTC}\\
 A_v &\equiv \prod_{j \in v} \sigma_j^z,\quad B_p \equiv \prod_{j \in p} \sigma_j^x,\label{eq:AvBp}
-\end{align}
-
-Where domain wall excitations in the 1D ising model are associated with -1 eigenstates of the $\sigma_z^i \sigma_z^{i+1}$ stabilizers, quasiparticle excitations for the toric code are associated with -1 eigenstates of the $A_v$ and $B_p$ stabilizers as defined in Eq. \ref{eq:AvBp}.
+\end{align}\red{where $v$ denotes vertices and $p$ denotes plaquettes on a 2D square lattice} \needcite.
+While domain wall excitations in the 1D ising model are associated with -1 eigenstates of the $\sigma_z^i \sigma_z^{i+1}$ stabilizers, quasiparticle excitations for the toric code are associated with -1 eigenstates of the $A_v$ and $B_p$ stabilizers as defined in Eq. \ref{eq:AvBp}.
  
- Broadly speaking, the algorithm is identical, but instead of having ``patches'' of measurement, there are measurement ``rails'', as indicated in \figref{fig:tc_fig}.  ``Centering'' of defects on rails amounts to shift-swaping defects into the center of the measurement rail.  We conjecture that a sparse measurement strategy with randomly placed measurement patches of fixed diameter might exist for sufficiently large/cold systems, but we do not comment further on that here.  The rail geometry of \figref{fig:tc_fig} is the simplest geometry that allows us to rely on the heuristic argument for a threshold sketched in Sec. \ref{sec:threshold}.
+ Broadly speaking, the algorithm is identical, but instead of having ``patches'' of measurement, there are measurement ``rails'', as indicated in \figref{fig:tc_fig}.  ``Centering'' of defects on rails amounts to shift-swaping defects into the center of the measurement rail \red{Cite your previous paper?}.  We conjecture that a sparse measurement strategy with randomly placed measurement patches of fixed diameter might exist for sufficiently large and sufficiently cold systems, \red{but we do not comment further on that here}.  The rail geometry of \figref{fig:tc_fig} is the simplest geometry that allows us to rely on the heuristic argument for a threshold sketched in Sec. \ref{sec:threshold} \red{rely on it to do what?}.
+ 
+ \red{There are two types of defects in this code. Do they propagate orthogonally? If so, is each measurement rail meant to catch and center one type of defect only?}
 
 \begin{figure}
 \begin{center}
@@ -426,11 +416,11 @@ Where domain wall excitations in the 1D ising model are associated with -1 eigen
 \label{sec:discussion}
 %%%%%%%%%%%%%%%%%%%%%%
 
-We have provided numerical and theoretical evidence of a few-measurement error correction protocol for a stabilizer code with string-like excitations.  The primary technical innovation of our algorithm is the bayesian decoding scheme for pairing defects, sketched in Sec. \ref{sec:ecc_alg}.  So long as an appropriate geometry of measurement devices is in place, and so long as defects undergo diffusive motion via coupling to a thermal bath, this scheme can be extended to higher dimensional stabilizer systems like the toric code, as demonstrated in Sec. \ref{sec:tc_alg}.
+We have provided numerical and theoretical evidence of a few-measurement error correction protocol for a stabilizer code with string-like excitations.  The primary technical innovation of our algorithm is a Bayesian decoding scheme for pairing defects based on partial information, sketched in Sec. \ref{sec:ecc_alg}. When combined with the measurement-free defect localization technique developed in Ref. \cite{Freeman2016}, this decoding scheme performs error correction efficiently and results in a stable quantum memory at temperatures lower than an empirically determined threshold temperature.  So long as an appropriate geometry of measurement devices is in place, and so long as defects undergo diffusive motion via coupling to a thermal bath, this scheme can be extended to higher dimensional stabilizer systems like the toric code, as demonstrated in Sec. \ref{sec:tc_alg}.
 
-This scheme complements what is known about decoders in the presence of \emph{noisy} measurements.  Figures \ref{fig:LifetimeVsMeasurementFraction} and \ref{fig:CriticalTempVsMeasurementFraction} demonstrate how a reduction in the measurement fraction in the lattice corresponds to a concomittant decrease in the threshold temperature, similar to how thresholds are known to be reduced when increasing the noise on measurements.
+Our results complement what is known about decoders in the presence of \emph{noisy} measurements.  Figures \ref{fig:LifetimeVsMeasurementFraction} and \ref{fig:CriticalTempVsMeasurementFraction} demonstrate how a reduction in the measurement fraction in the lattice corresponds to a concomitant decrease in the threshold temperature, similar to how thresholds are known to be reduced when increasing the noise on measurements. \red{Does this suggest that one should just throw away the noisiest measurements?}
 
-More fundamentally, our algorithm can be understood as an entropy reduction scheme.  Configurations which give rise to errors in the encoded subspace are exponentially suppressed as system size is made larger.  This is in contrast with ``energetic'' suppression---that is, suppression via cooling or by widening the gap to excitations $\Delta$.  This tradeoff between entropic and energetic contributions is depicted in Figures \ref{fig:LifetimeVsTemperatureVsEnergy} and \ref{fig:LifetimeVsMeasurementFraction}.  Depending on the resource requirements of a particular architecture, the threshold temperature can be tuned either by engineering a larger gap, $\Delta$, or by changing the number of measurements used.  In practice, this will depend on the lowest effective temperature available, the maximum measurement rate, $\chi$, as well as the practical difficulty of employing more measuring devices.
+More fundamentally, our algorithm can be understood as an entropy reduction scheme.  Configurations that give rise to errors in the encoded subspace are exponentially suppressed as system size is made larger.  This is in contrast with ``energetic'' suppression---that is, suppression \red{via cooling} or by widening the gap to excitations $\Delta$.  This tradeoff between entropic and energetic contributions is depicted in Figures \ref{fig:LifetimeVsTemperatureVsEnergy} and \ref{fig:LifetimeVsMeasurementFraction}.  Depending on the resource requirements of a particular architecture, the threshold temperature can be tuned either by engineering a larger gap, $\Delta$, or by changing the number of measurements used.  In practice, this will depend on the lowest effective temperature available, the maximum measurement rate, $\chi$, \red{Is $\chi$ used anywhere else?} as well as the practical difficulty of employing more measuring devices.
 
 
 
