@@ -6,7 +6,7 @@
 %Control: page (0) single
 %Control: year (1) truncated
 %Control: production of eprint (0) enabled
-\begin{thebibliography}{0}%
+\begin{thebibliography}{2}%
 \makeatletter
 \providecommand \@ifxundefined [1]{%
  \@ifx{#1\undefined}
@@ -50,4 +50,21 @@
 \providecommand \BibitemShut  [1]{\csname bibitem#1\endcsname}%
 \let\auto@bib@innerbib\@empty
 %</preamble>
+\bibitem [{\citenamefont {Gottesman}(1998)}]{Gottesman98}%
+  \BibitemOpen
+  \bibfield  {author} {\bibinfo {author} {\bibfnamefont {D.}~\bibnamefont
+  {Gottesman}},\ }\href@noop {} {\bibfield  {journal} {\bibinfo  {journal}
+  {Physical Review A}\ }\textbf {\bibinfo {volume} {57}},\ \bibinfo {pages}
+  {127} (\bibinfo {year} {1998})}\BibitemShut {NoStop}%
+\bibitem [{\citenamefont {Freeman}\ \emph {et~al.}(2014)\citenamefont
+  {Freeman}, \citenamefont {Herdman}, \citenamefont {Gorman},\ and\
+  \citenamefont {Whaley}}]{Freeman2014}%
+  \BibitemOpen
+  \bibfield  {author} {\bibinfo {author} {\bibfnamefont {C.~D.}\ \bibnamefont
+  {Freeman}}, \bibinfo {author} {\bibfnamefont {C.~M.}\ \bibnamefont
+  {Herdman}}, \bibinfo {author} {\bibfnamefont {D.~J.}\ \bibnamefont {Gorman}},
+  \ and\ \bibinfo {author} {\bibfnamefont {K.~B.}\ \bibnamefont {Whaley}},\
+  }\href {\doibase 10.1103/PhysRevB.90.134302} {\bibfield  {journal} {\bibinfo
+  {journal} {Physical Review B}\ }\textbf {\bibinfo {volume} {90}},\ \bibinfo
+  {pages} {134302} (\bibinfo {year} {2014})}\BibitemShut {NoStop}%
 \end{thebibliography}%
