@@ -98,7 +98,7 @@
 \date{\today}
 
 \begin{abstract}
- We demonstrate the existence of a finite temperature threshold for a 1D stabilizer code under an error correcting protocol that uses only a fixed, constant fraction of the syndrome measurements.  We sketch how this algorithm generalizes to higher dimensional stabilizer codes with string-like excitations, like the toric code. 
+ We demonstrate the existence of a finite temperature threshold for a 1D stabilizer code under an error correcting protocol that \CMH{requires only a} fraction of the syndrome measurements.  We sketch how this algorithm generalizes to higher dimensional stabilizer codes with string-like excitations, like the toric code. 
 \end{abstract}
 
 \maketitle
@@ -191,7 +191,7 @@ We define its bare lifetime to be $\Gamma_0^{-1}$.
 \subsection{Finite Temperature vs. Infinite Temperature}
 \label{sec:temperature}
 
- The vast majority of the error correction literature assumes an error model akin to an ``infinite temperature limit''.  More precisely, an array of qubits receives errors from some set of error operators ${E_i}$ independently at random with some probability $p$ every error correction cycle.  The threshold theorems state that there exists some critical error probability $p_c$ below which it is possible to return an error correcting code to its encoded state with unit probability for asymptotically large systems.  For the toric code, $p_c\approx.11$.
+ The \CMH{\sout{vast}} majority of the error correction literature assumes an error model akin to an ``infinite temperature limit''.  More precisely, an array of qubits receives errors from some set of error operators ${E_i}$ independently at random with some probability $p$ every error correction cycle.  The threshold theorems state that there exists some critical error probability $p_c$ below which it is possible to return an error correcting code to its encoded state with unit probability for asymptotically large systems.  For the toric code, $p_c\approx.11$.
  
  Contrariwise, thresholds at finite temperature are usually quoted in terms of a critical \emph{temperature}.  That is, there must exist some critical temperature $T_c$ below which codes can be reliably corrected.  Unfortunately, this definition obscures a great deal of physics---different choices of bath model can greatly affect the dynamics of the error processes, to the extent that a quoted ``critical temperature'' often implicitly specifies a choice of bath model.  Because different bath interactions can give rise to different system dynamics, the choice of bath also directly affects the strategy used for error correction.  For example, it is known that the toric code's threshold temperature is altered by considering a space-correlated bath rather than an uncorrelated one \cite{Novais2013}.
  
@@ -270,7 +270,10 @@ To calculate this probability, we proceed via Bayes rule:
 &P(d_1:d_2 | d_1^{x_1,t_1} \wedge d_2^{x_2,t_2}) = \\ \notag
 &\frac{P(d_1^{x_1,t_1} \wedge d_2^{x_2,t_2} | d_1:d_2) P(d_1 : d_2)}{P(d_1^{x_1,t_1}\wedge d_2^{x_2,t_2})}
 \end{align}
-The individual terms on the right hand side of equation \ref{eq:bayes} are straightforward to interpret.  $d_i^{x_i,t_i}$ indicates a defect residing on measurement patch $i$ with spacetime coordinate $x_i,t_i$.  $P(d_1^{x_1,t_1} \wedge d_2^{x_2,t_2} | d_1:d_2)$ represents the probability that two measured defects would be at $(x_1,t_1)$ and $(x_2,t_2)$ given that they are indeed a pair.  This can be related to the probability that a one dimensional diffusion process with diffusion constant $D$ will perform an excursion with a displacement $|x_2-x_1|$ or greater in a time $t_2 - t_1$; \textit{i.e.,} will perform an excursion that can reach measurement patches at $x_1$ and $x_2$. Explicitly,
+The individual terms on the right hand side of equation \ref{eq:bayes} are straightforward to interpret.  $d_i^{x_i,t_i}$ indicates a defect residing on measurement patch $i$ with spacetime coordinate $x_i,t_i$.  $P(d_1^{x_1,t_1} \wedge d_2^{x_2,t_2} | d_1:d_2)$ represents the probability that two measured defects would be at $(x_1,t_1)$ and $(x_2,t_2)$ given that they are indeed a pair. \CMH{$P(d_1 : d_2)$ represents the probability that two measured defects, $d_1$ and $d_2$, are in fact a pair.  Finally, $P(d_1^{x_1,t_1}\wedge d_2^{x_2,t_2})$ is the probability that two defects are measured, one at $(x_1,t_1)$, and the other at $(x_2,t_2)$. }
+
+
+\CMH{\sout{This} $P(d_1^{x_1,t_1} \wedge d_2^{x_2,t_2} | d_1:d_2)$} can be related to the probability that a one dimensional diffusion process with diffusion constant $D$ will perform an excursion with a displacement $|x_2-x_1|$ or greater in a time $t_2 - t_1$; \textit{i.e.,} will perform an excursion that can reach measurement patches at $x_1$ and $x_2$. Explicitly,
 \begin{align}
 \label{eq:bayesformula}
 &P(d_1^{x_1,t_1} \wedge d_2^{x_2,t_2} | d_1:d_2) \\ \notag
@@ -279,7 +282,7 @@ The individual terms on the right hand side of equation \ref{eq:bayes} are strai
 \end{align}
 For our analysis, we will choose $D\propto \gamma_0$.  The exact correspondence between $D$ and $\gamma_0$ depends on the details of the error correction algorithm itself, so, in practice, we treat the constant of proportionality as an empirically tuned parameter.  Furthermore, we approximate any detected defects as arising from a pair that was created an equal distance between the measurement patches at locations $x_1$ and $x_2$ for the purposes of calculating the probability in Eq. \ref{eq:bayesformula}.
 
-$P(d_1 : d_2)$ represents the probability that two measured defects, $d_1$ and $d_2$, are in fact a pair.  Finally, $P(d_1^{x_1,t_1}\wedge d_2^{x_2,t_2})$ is the probability that two defects are measured, one at $(x_1,t_1)$, and the other at $(x_2,t_2)$.  As we discuss in Appendix \ref{sec:bayesdecoder}, these factors are not as important for the decoding scheme as Eq. \ref{eq:bayesformula}.  In practice, we find that using the expression from Eq. \ref{eq:bayesformula} alone is sufficient to provide resilient error correction.  We defer further discussion to the appendix.
+\CMH{\sout{$P(d_1 : d_2)$ represents the probability that two measured defects, $d_1$ and $d_2$, are in fact a pair.  Finally, $P(d_1^{x_1,t_1}\wedge d_2^{x_2,t_2})$ is the probability that two defects are measured, one at $(x_1,t_1)$, and the other at $(x_2,t_2)$.}}  As we discuss in Appendix \ref{sec:bayesdecoder}, \CMH{\sout{these} the remaining two} factors are not as important for the decoding scheme as Eq. \ref{eq:bayesformula}.  In practice, we find that using the expression from Eq. \ref{eq:bayesformula} alone is sufficient to provide resilient error correction.  We defer further discussion to the appendix.
  
  
  \subsection{Error dynamics}
@@ -306,21 +309,23 @@ For sufficiently low temperatures (see Sec. \ref{sec:correspondence}), $\tau_{\e
  \subsubsection{Correspondence between model and full error dynamics}
  \label{sec:correspondence}
  
+ \CMH{\it{Could this be moved above the previous section to motivate the simple model?}}
+ 
  In this section, we detail the approximations that are necessary to map the error dynamics of the simple model to the full error dynamics of the 1D Ising model in the presence of our protocol.  The primary approximations made are concerning \textbf{(1)} fast defect detection, \textbf{(2)} accurate pairing, \textbf{(3)} defects escaping measurement patches, and \textbf{(4)} defect interactions.
  
  \textbf{(1)}. If defects are produced in between measurement patches faster than they are detected, then this algorithm cannot in principle correct errors.  Thus, we require that the characteristic diffusion time for defects in the bulk to migrate to a measurement patch, $\gamma_0^{-1}(\lambda_b)^2$, to be much shorter than the characteristic timescale over which a pair of defects is created in the bulk, $\gamma_0^{-1} \exp{\Delta/T}$.  Thus, working at low temperature ensures this approximation.
  
  \textbf{(2)}. If defects are paired incorrectly more often than they are paired correctly, then the algorithm will fail.  To ensure that $(\tau_{\epsilon}^{-1} / \tau_d^{-1})\leq1$ (see Eq. \ref{eq:err_scaling}), we must work in the diffuse limit, where the average number of defects per unit cell is much less than $1$.  This is equivalent to $\lambda \gamma_+<<1$.  This ensures that, when defects are being processed by the algorithm, that more often than not, defects will be correctly paired simply because it's unlikely there are any other defects nearby.  Thus, assuming condition (1)---that defects are detected quickly---defect pairs satisfying Eq. \ref{eq:bayesformula} are more likely than not to be genuine pairs. 
  
- \textbf{(3)}. While the simple model does not account for defects escaping measurement patches, this can occur in the real system when a series of translation events occurs between measurements.  For a measurement rate $\chi$, these processes are of $O(\gamma_+ (\gamma_0/\gamma_-) (\gamma_0/\chi)^{\lambda_m/2})$, for measurement patches of size $\lambda_m$, assuming $\chi > \gamma_0$.  Thus, this process can be suppressed by working with a larger sized measurement patch, or with a measurement rate suitably larger than the intrinsic translation rate of the system, $\gamma_0$.  At worst, the age of defects that escape measurement patches but that are subsequently recaptured may be underestimated by the algorithm, because the ``age'' of the defect would be erroneously reset to zero.  This would then erroneously underestimate the distance the algorithm would plausibly search for a pairing defect---i..e, the denominator of the error function in Eq. \ref{eq:bayesformula} could be artificially small because the ``real'' defect age is actually older.
+ \textbf{(3)}. While the simple model does not account for defects escaping measurement patches, this can occur in the real system when a series of translation events occurs between measurements.  For a measurement rate $\chi$, these processes are of $O(\gamma_+ (\gamma_0/\gamma_-) (\gamma_0/\chi)^{\lambda_m/2})$, \CMH{\it{Aren't there lower order processes near the boundaries?}} for measurement patches of size $\lambda_m$, assuming $\chi > \gamma_0$.  Thus, this process can be suppressed by working with a larger sized measurement patch, or with a measurement rate suitably larger than the intrinsic translation rate of the system, $\gamma_0$.  At worst, the age of defects that escape measurement patches but that are subsequently recaptured may be underestimated by the algorithm, because the ``age'' of the defect would be erroneously reset to zero.  This would then erroneously underestimate the distance the algorithm would plausibly search for a pairing defect---i..e, the denominator of the error function in Eq. \ref{eq:bayesformula} could be artificially small because the ``real'' defect age is actually older.
 
- In principle, because defects have some constant rate of escape from measurement patches, this sets a maximum correctible distance for the algorithm.  If we denote the timescale over which these escapes occur on average as $\te$, then one of a defect in a pair that is separated by much more than $\sqrt{D \te}$ will be overwhelmingly likely to escape from its measurement patch before the denominator of \ref{eq:bayesformula} can grow large enough to match the defect to its pair---potentially spoiling the system size scaling of the algorithm.
+ In principle, because defects have some constant rate of escape from measurement patches, this sets a maximum correctible distance for the algorithm.  \CMH{\it{Can we simply reference the appendix here and put the the rest of this discussion in (3) in the appendix?}}If we denote the timescale over which these escapes occur on average as $\te$, then one of a defect in a pair that is separated by much more than $\sqrt{D \te}$ will be overwhelmingly likely to escape from its measurement patch before the denominator of \eqref{eq:bayesformula} can grow large enough to match the defect to its pair---potentially spoiling the system size scaling of the algorithm.
  
  In practice, by occasionally scaling the size of the measurement patches, $\lambda_m$, keeping the ratio of measured sites to unmeasured sites fixed, this maximum distance can be tuned larger.  For our simulations, we did not need to perform this measurement patch scaling, because the rate of defect escape was so small, even for $\lambda_m=3$.  Care must be taken, however, because measurement patches cannot be made arbitrarily large without violating the condition mentioned in point \textbf{(2)}.  To properly account for these sorts of errors, a more involved algorithm must be used which more accurately estimates defect lifetimes.  We provide such a modified algorithm that corrects these rare long-distance errors without any additional measurement resources in Appendix \ref{sec:appendix_fix_long_errors}.  We emphasize, however, that the gains from using such an algorithm would only be apparent at length scales considerably larger than those studied in this manuscript.
 
  \textbf{(4)}. In reality, the defects can annihilate without the protocol intentionally pairing them.  To leading order, at low temperature, these processes are ``self-correcting''.  That is, a pair of neighboring defects enters the system, and then is subsequently annihilated.  In principle, it is possible for a sequence of $k$ free pairs of defects to appear in the bulk---one pair per unit cell---of which, $k-1$ are then subsequently erroneously ``corrected'', resulting in two defects separated by a distance $k \lambda$, but this process is exponentially slow in the average defect unit cell density, which we already choose to be small via condition \textbf{(2)}.  That is, the error rate due to the erroneous  separation of defects by a distance $\lambda k$ is $\propto(\lambda \gamma_+)^k$.
  
- Additionally, defect interactions actually \emph{decrease} the number of defects in the system.  Thus, while our toy error model is ``non-interacting''---that is, it assumes $L/\lambda$ independent error processes which, in sum, take the form described in Eq. \ref{eq:err_scaling}---a more careful treatment of the error process, including interactions between defects, as in the real model, would result in an error probability \emph{smaller} than the one calculated here.  In Sec. \ref{sec:experiments}, we provide numerical evidence that the lifetime of the Ising model in the presence of the protocol scales exponentially with the number of measurement patches, as anticipated by the upper bound in Eq.\ref{eq:err_scaling}.
+ Additionally, defect interactions actually \emph{decrease} the number of defects in the system.  Thus, while our toy error model is ``non-interacting''---that is, it assumes $L/\lambda$ independent error processes which, in sum, take the form described in Eq. \ref{eq:err_scaling}---a more careful treatment of the error process, including interactions between defects, as in the real model, would result in an error probability \emph{smaller} than the one calculated here.  In Sec. \ref{sec:experiments}, we provide numerical evidence that the lifetime of the Ising model in the presence of the protocol scales exponentially with the number of measurement patches \CMH{(or system size)} \CMH{\it{Should we really claim this? It looks like we only have 3 points in Fig. 3 that are consistent with exponential scaling...}}, as anticipated by the upper bound in Eq.\ref{eq:err_scaling}.
  
  \subsubsection{Error correction at any measurement density}
  \label{sec:ecc_any_m}
@@ -343,11 +348,11 @@ In this section, we present the numerical simulations of the protocol on finite-
 \begin{center}
 \scalebox{1}{\includegraphics[width=1.0\columnwidth]{LifetimeVsTemperature.pdf}}
 \end{center}
-\caption{Lifetime \it{enhancement} of several system sizes $L$ as a function of temperature $T$ using a measurement fraction of $m=3/7$.  Dotted line indicates example fit for threshold temperature $T_{th}$ extraction for $L=224$ data.  Inset depicts finite size scaling of $T_{th}$ with inverse length $1/L$.  Below $T\approx0.16$, we find the lifetime to grow with $L$, indicative of a finite-temperature threshold.}
+\caption{Lifetime {\it enhancement} of several system sizes $L$ as a function of temperature $T$ using a measurement fraction of $m=3/7$.  Dotted line indicates example fit for threshold temperature $T_{th}$ extraction for $L=224$ data \CMH{\it{This extrapolation is confusing: are you only using three points near the 10X enhancement region?}}.  Below $T\approx0.16$, we find the lifetime to grow with $L$, indicative of a finite-temperature threshold. {\it Inset}: finite size scaling of $T_{th}$ with inverse length $1/L$. \CMH{\it{Put $T{\rm{th}}$ label beside the y-axis and label the x-axis with $1/L$. Can you add errorbars to these estimates?}}}
 \label{fig:LifetimeVsTemperature}
 \end{figure}
 
-\figref{fig:LifetimeVsTemperature} depicts the scaling of the system lifetime enhancement with temperature for several system sizes.  At low temperatures, the system lifetime increases monotonically with system size, indicating a finite-temperature theshold.  Due to finite size effects, it is difficult to extract an unambiguous threshold temperature, but below $T\approx0.16$, the lifetime manifestly increases with larger system size.  We estimate the threshold by fitting $\Gamma(T)$ for $(\Gamma/\Gamma_0)^{-1} \geq 10$ for the largest system size studied and extrapolating this fit $\Gamma_f$ to define the threshold temperature $T_{\rm{th}}$ by $\Gamma_f(T_{\rm{th}}) = \Gamma_0$.
+\figref{fig:LifetimeVsTemperature} depicts the scaling of the system lifetime enhancement with temperature for several system sizes.  At low temperatures, the system lifetime increases monotonically with system size, indicating a finite-temperature theshold.  Due to finite size effects, it is difficult to extract an unambiguous threshold temperature, but below $T\approx0.16$, the lifetime manifestly increases with larger system size.  We estimate the threshold by fitting $\Gamma(T)$ for $(\Gamma/\Gamma_0)^{-1} \geq 10$ for the largest system size studied and extrapolating this fit $\Gamma_f$ to define the threshold temperature $T_{\rm{th}}$ by $\Gamma_f(T_{\rm{th}}) = \Gamma_0$. \CMH{ The inset of \figref{fig:LifetimeVsTemperature} shows the finite-size scaling of $T_{\rm{th}}$, which suggests that $T_{\rm{th}}$ remains non-zero in the limit of $L\rightarrow \infty$; this demonstrates that this protocol has a finite-temperature threshold in the thermodynamic limit.}
 
 %%%%%%%%%%%%%%%%%%%%%%
 \begin{figure}
@@ -359,7 +364,7 @@ In this section, we present the numerical simulations of the protocol on finite-
 \end{center}
 \caption[justification=raggedright]{
 (Top) Lifetime enhancement for temperatures both below and above the threshold as a function of system size $L$, using a measurement fraction $m=3/7$.  Note the monotonic growth in lifetime at low temperatures, as well as the plateau in lifetime for moderately sized systems. A $3/7$ measurement fraction was used for this data.
-(Bottom) The same data rescaled by an additional factor $\Gamma_0^{-1}$, to emphasize the origin and scaling of the plateau in system lifetimes.}
+(Bottom) The same data rescaled by an additional factor $\Gamma_0^{-1}$, to emphasize the origin and scaling of the plateau in system lifetimes. \CMH{\it{Stack these two figures vertically such that thye share the x-axis and legend (so remove one of the legends and the corresponding whitespace}}}
 \label{fig:LifetimeVsSystemSize}
 \end{figure}
 %%%%%%%%%%%%%%%%%%%%%%
@@ -390,7 +395,7 @@ In this section, we present the numerical simulations of the protocol on finite-
 \begin{center}
 \scalebox{1}{\includegraphics[width=1.0\columnwidth]{LifetimeVsTemperatureVsEnergy.pdf}}
 \end{center}
-\caption{Lifetime enhancement as a function of temperature for a variety of energy scales $\Delta$ (see Eq. \ref{eq:isingham}) for an $L=224$ system with m=$3/7$.}
+\caption{Lifetime enhancement as a function of temperature for a variety of energy scales $\Delta$ (see Eq. \ref{eq:isingham}) for an $L=224$ system with m=$3/7$. \CMH{\it{{Combine w/Fig. 4 to make a 2-panel figure vertically.}}}}
 \label{fig:LifetimeVsTemperatureVsEnergy}
 \end{figure}
 
@@ -402,7 +407,7 @@ In this section, we present the numerical simulations of the protocol on finite-
 \vspace{-1.2\baselineskip}
 \subfloat{\scalebox{1}{\includegraphics[width=\columnwidth]{CriticalTempVsDelta.pdf}}}  
 \end{center}
-\caption[justification=raggedright]{The threshold temperatures as a function of measurement fraction, $m$ (top),  and the Hamiltonian energy scale $\Delta$ (see Eq. \ref{eq:isingham})(bottom).  At zero measurement fraction, the critical temperature is 0, and at unit measurement fraction, the critical temperature is $\mathcal{O}(1)$.}
+\caption[justification=raggedright]{The threshold temperatures as a function of measurement fraction, $m$ (top),  and the Hamiltonian energy scale $\Delta$ (see Eq. \ref{eq:isingham})(bottom).  At zero measurement fraction, the critical temperature is 0, and at unit measurement fraction, the critical temperature is $\mathcal{O}(1)$. \CMH{\it{Put figures side-by-side horizontally and share the y-axis. Use fewer y-axis tick labels.}}}
 \label{fig:CriticalTempVsMeasurementFraction}
 \end{figure}
 %%%%%%%%%%%%%%%%%%%%%%
@@ -410,8 +415,7 @@ In this section, we present the numerical simulations of the protocol on finite-
 
 %************************EXPAND THIS PARAGRAPH A LITTLE
 
-Finally, in Fig. \ref{fig:LifetimeVsTemperatureVsEnergy}, we plot the lifetime of the system in the presence of the protocol at various energy scales $\Delta$.  By contrasting Figures \ref{fig:LifetimeVsMeasurementFraction} and \ref{fig:LifetimeVsTemperatureVsEnergy}, one can deduce the relative benefits of error suppression via more measurement resources versus error suppression via hamiltonian engineering (i.e., a larger gap to excitation).
-
+Finally, in Fig. \ref{fig:LifetimeVsTemperatureVsEnergy}, we plot the lifetime of the system in the presence of the protocol at various energy scales $\Delta$. \CMH{The scaling of the threshold temperature with $\Delta$ is presented in  \ref{fig:CriticalTempVsMeasurementFraction}}. By contrasting Figures \ref{fig:LifetimeVsMeasurementFraction} and \ref{fig:LifetimeVsTemperatureVsEnergy}, one can deduce the relative benefits of error suppression via more measurement resources versus error suppression via hamiltonian engineering (i.e., a larger gap to excitation). 
 
 
   %%%%%%%%%%%%%%%%%%%%%%
@@ -519,7 +523,7 @@ Suppose the left defect has recently escaped a measurement patch and been recapt
 \begin{equation}
 \Tau(C,\tau) = \tau \frac{p^{-C} - 1}{1 - p}
 \end{equation}
-
+\noindent
 Thus, after a time $\Tau(C,\tau)$, a defect could, in principle, be paired with another defect a distance $C \sqrt(D \tau)$ away by the algorithm.
 
 Recall that a diffusion process with constant $D$ will, in $\delta t$ time, become displaced by a distance $\delta x = \sqrt{D \delta t}$.  Because the defects are trapped by the measurement patches, the diffusion rate must be renormalized: $\delta x = \sqrt{D \delta t \cdot \frac{\lambda}{\gamma_0 \te}}$.  This is because it takes a time $\te$ for a defect to actually perform escape from a measurement patch to perform a random step, and this random step has a characteristic length equal to the length of the unit cell, $\lambda$.  Thus, on average, it takes a time $\delta t = C^2 \gamma_0 \te^2 / \lambda$ for a diffusive process to perform an excursion of distance $C \sqrt{D \te}$.
